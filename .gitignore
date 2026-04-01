@@ -1,0 +1,5 @@
+node_modules/
+rankin.db
+*.db-shm
+*.db-wal
+.env
