@@ -1,5 +1,34 @@
+# dependencies
 node_modules/
-rankin.db
-*.db-shm
-*.db-wal
+.pnp
+.pnp.js
+
+# next
+.next/
+out/
+build/
+dist/
+
+# misc
+.DS_Store
+*.pem
+.vscode/
+.idea/
+
+# env
 .env
+.env.local
+.env.*.local
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts.bak
+
+# supabase
+supabase/.branches
+supabase/.temp
