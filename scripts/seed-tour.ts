@@ -6,7 +6,10 @@
  * Plan B (if Tour API approval is delayed):
  *   Load from data/seed-chungnam.csv instead of calling the API.
  */
-import "dotenv/config";
+import { config as loadEnv } from "dotenv";
+loadEnv({ path: ".env.local" });
+loadEnv({ path: ".env" });
+
 import { db } from "@/lib/db/client";
 import { experiences } from "@/lib/db/schema";
 
