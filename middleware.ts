@@ -1,39 +1,18 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          res.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          res.cookies.set({ name, value: "", ...options });
-        },
-      },
-    },
-  );
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Partner routes require auth. Role/approval check happens in page loaders.
-  if (req.nextUrl.pathname.startsWith("/dashboard") && !user) {
+// Auth.js v5 middleware — partner routes require an authenticated session.
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const isPartnerRoute = pathname.startsWith("/dashboard");
+  if (isPartnerRoute && !req.auth) {
     const loginUrl = new URL("/onboarding", req.url);
     return NextResponse.redirect(loginUrl);
   }
-
-  return res;
-}
+  return NextResponse.next();
+});
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/demo).*)"],
+  // Skip Next internals and the demo toggle route (which has its own guard).
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/demo|api/auth).*)"],
 };
